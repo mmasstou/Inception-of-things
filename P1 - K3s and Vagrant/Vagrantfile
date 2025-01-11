@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+# Vagrantfile for K3s setup
+
+Vagrant.configure("2") do |config|
+  # Machine 1: Server
+  config.vm.define "Server" do |server|
+    server.vm.box = "ubuntu/bionic64" # Use the latest stable Ubuntu or OS of your choice
+    server.vm.hostname = "Server"
+    server.vm.network "private_network", ip: "192.168.56.110"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = 512
+      vb.cpus = 1
+    end
+    server.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y openssh-server curl
+      # Install K3s in controller mode
+      curl -sfL https://get.k3s.io | sh -
+    SHELL
+  end
+
+  # Machine 2: ServerWorker
+  config.vm.define "ServerWorker" do |worker|
+    worker.vm.box = "ubuntu/bionic64" # Use the latest stable Ubuntu or OS of your choice
+    worker.vm.hostname = "ServerWorker"
+    worker.vm.network "private_network", ip: "192.168.56.111"
+    worker.vm.provider "virtualbox" do |vb|
+      vb.memory = 512
+      vb.cpus = 1
+    end
+    worker.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y openssh-server curl
+      # Install K3s in agent mode
+      K3S_URL="https://192.168.56.110:6443" K3S_TOKEN="<your_token_here>" curl -sfL https://get.k3s.io | K3S_NODE_NAME=ServerWorker sh -
+    SHELL
+  end
+end
