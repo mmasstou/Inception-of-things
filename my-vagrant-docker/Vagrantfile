@@ -1,0 +1,25 @@
+# Vagrant.configure("2") do |config|
+#   config.vm.provider "docker" do |d|
+#     # Use an existing Docker image (e.g., Ubuntu)
+#     d.image = "ubuntu:latest"
+#     d.has_ssh = true
+#   end
+
+#   # Optional: forward ports
+#   config.vm.network "forwarded_port", guest: 80, host: 8080
+  
+#   # Optional: run commands on the container startup
+#   config.vm.provision "shell", inline: <<-SHELL
+#     apt-get update -y
+#     apt-get install -y nginx
+#   SHELL
+# end
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "docker" do |d|
+    d.image = "ubuntu_with_ssh" # use the custom image with SSH
+    d.has_ssh = true
+  end
+
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+end

@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "utm_ubuntu" do |utm_vm|
+    utm_vm.vm.box = "ubuntu"  # This is a placeholder since no box will be downloaded
+    utm_vm.vm.hostname = "utm-vm"
+
+    # SSH configuration to connect to the VM
+    utm_vm.vm.network "public_network", ip: "192.168.64.2"
+    utm_vm.ssh.host = "192.168.64.2"
+    utm_vm.ssh.username = "ubuntu"
+    utm_vm.ssh.password = "ubuntu"
+    utm_vm.ssh.port = 22
+  end
+end
+
